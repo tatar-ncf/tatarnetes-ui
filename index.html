@@ -9,15 +9,16 @@
 </head>
 <body>
   <!-- Чәй тәнәфесе тәрәзәсе / tea-break overlay -->
-  <div id="tea-overlay" class="tea-overlay" hidden>
+  <div id="tea-overlay" class="tea-overlay" role="dialog" aria-modal="true"
+       aria-labelledby="tea-title" aria-live="assertive" hidden>
     <div class="tea-card">
-      <div class="tea-emoji">🍵🫓🥟🍯</div>
-      <img src="assets/face-tea.svg" alt="түбәтәйле йөз" class="tea-face" />
-      <h1>Сөтле чәй һәм кыстыбый тәнәфесе</h1>
+      <div class="tea-emoji" aria-hidden="true">🍵🫓🥟🍯</div>
+      <img src="assets/face-tea.svg" alt="Түбәтәйле йөз чәй эчә" class="tea-face" />
+      <h1 id="tea-title">Сөтле чәй һәм кыстыбый тәнәфесе</h1>
       <p class="tt">Татарнетес хәзер чәй эчә. Кыстырылма, туганкай — безгә дә
         чәй эчәргә кирәк! Зинһар, <b><span id="tea-left">берничә</span> минуттан</b>
         соң тагын кереп кара.</p>
-      <p class="en"><i>Tatarnetes is having tea with milk and kыstybyй. Please don't
+      <p class="en"><i>Tatarnetes is having tea with milk and kystybyy. Please don't
         bother us — try again in a few minutes.</i></p>
     </div>
   </div>
@@ -42,12 +43,12 @@
   <main>
     <nav class="side">
       <div class="side-title">Асыллар / Resources</div>
-      <ul>
-        <li class="active" data-view="kuzaklar">🫛 Кузаклар <small>(pods)</small></li>
-        <li data-view="toennar">🔗 Төеннәр <small>(nodes)</small></li>
-        <li data-view="hezmatler">🤝 Хезмәтләр <small>(services)</small></li>
-        <li data-view="urnashtyru">📦 Урнаштырулар <small>(deployments)</small></li>
-        <li data-view="maydannar">🏛 Мәйданнар <small>(namespaces)</small></li>
+      <ul role="tablist">
+        <li class="active" role="tab" tabindex="0" data-view="kuzaklar">🫛 Кузаклар <small>(pods)</small></li>
+        <li role="tab" tabindex="0" data-view="toennar">🔗 Төеннәр <small>(nodes)</small></li>
+        <li role="tab" tabindex="0" data-view="hezmatler">🤝 Хезмәтләр <small>(services)</small></li>
+        <li role="tab" tabindex="0" data-view="urnashtyru">📦 Урнаштырулар <small>(deployments)</small></li>
+        <li role="tab" tabindex="0" data-view="maydannar">🏛 Мәйданнар <small>(namespaces)</small></li>
       </ul>
       <div class="side-foot">
         <div>Tatarch License 2.0</div>

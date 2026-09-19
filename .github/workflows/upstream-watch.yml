@@ -25,5 +25,5 @@ jobs:
           existing=$(gh issue list --search "$title in:title" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
           [ -n "$existing" ] && { echo "already tracked #$existing"; exit 0; }
           body="Апстрим Dashboard яңа тотрыклы версия: **$latest** (хәзерге \`$pinned\`). Татарлаштыру кирәк. / New upstream stable Dashboard: $latest (pinned $pinned)."
-          gh issue create --title "$title" --body "$body" --label upstream 2>/dev/null \
-            || gh issue create --title "$title" --body "$body"
+          gh label create upstream --color ededed --description "Upstream tracking" 2>/dev/null || true
+          gh issue create --title "$title" --body "$body" --label upstream

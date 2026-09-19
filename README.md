@@ -41,7 +41,8 @@ cd tatarnetes-ui
 python3 -m http.server 8080      # http://localhost:8080
 ```
 
-Backend кирәкми — демо режимда эшли. Чын кластерга тоташтыру — `docs`'та (later).
+Backend кирәкми — демо режимда эшли (өчпочмак, чәкчәк, бәлеш подлары :).
+Чын кластерга тоташтыру планлаштырыла. / Real-cluster wiring is planned.
 
 ## English
 

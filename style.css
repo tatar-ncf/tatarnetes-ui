@@ -51,11 +51,11 @@ main{display:flex;gap:16px;padding:16px;align-items:flex-start}
 .side-title{background:var(--tat-red);color:#fff;padding:8px 12px;font-weight:700;font-size:13px}
 .side ul{list-style:none;margin:0;padding:6px}
 .side li{padding:9px 10px;border-radius:8px;cursor:pointer;font-size:14px;margin:2px 0}
-.side li small{color:#7a6b4d}
+.side li small{color:#5f5030}
 .side li:hover{background:#f0e6cc}
 .side li.active{background:var(--tat-green);color:#fff}
 .side li.active small{color:#d9f2e2}
-.side-foot{padding:12px;font-size:11px;color:#7a6b4d;border-top:1px dashed #d8c79c}
+.side-foot{padding:12px;font-size:11px;color:#5f5030;border-top:1px dashed #d8c79c}
 
 .content{
   flex:1;background:var(--tat-cream);border-radius:12px;box-shadow:var(--shadow);
@@ -64,7 +64,7 @@ main{display:flex;gap:16px;padding:16px;align-items:flex-start}
 .view-head{display:flex;justify-content:space-between;align-items:baseline;
   border-bottom:2px solid var(--tat-red);padding-bottom:8px;margin-bottom:10px}
 .view-head h2{margin:0;color:var(--tat-green-dark)}
-.cmd-hint{font-size:12px;color:#7a6b4d}
+.cmd-hint{font-size:12px;color:#5f5030}
 .cmd-hint code{background:#efe4c6;padding:2px 6px;border-radius:5px}
 
 /* --- Таблица / grid --- */
@@ -88,7 +88,7 @@ main{display:flex;gap:16px;padding:16px;align-items:flex-start}
 .tea-face{width:120px;height:120px;margin:6px auto}
 .tea-card h1{color:var(--tat-red);margin:6px 0 12px;font-size:22px}
 .tea-card .tt{font-size:16px;line-height:1.5}
-.tea-card .en{font-size:13px;color:#7a6b4d}
+.tea-card .en{font-size:13px;color:#5f5030}
 
 /* --- Toast --- */
 .toast-wrap{position:fixed;right:16px;bottom:16px;z-index:60;display:flex;flex-direction:column;gap:8px}

@@ -108,16 +108,20 @@ function renderView(key) {
   document.getElementById("view-title").textContent = v.title;
   document.getElementById("cmd-hint").textContent = v.cmd;
   const head = document.getElementById("grid-head");
-  head.innerHTML = "<tr>" + v.head.map((h) => `<th>${h}</th>`).join("") + "</tr>";
+  head.innerHTML = "<tr>" + v.head.map((h) => `<th>${esc(h)}</th>`).join("") + "</tr>";
   const body = document.getElementById("grid-body");
   body.innerHTML = v.rows.map((r) =>
     "<tr>" + r.map(cellHtml).join("") + "</tr>"
   ).join("");
 }
+// HTML-экранлау / escape untrusted text before it touches innerHTML.
+const esc = (s) => String(s).replace(/[&<>"']/g, (m) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+
 function cellHtml(c) {
   if (c && typeof c === "object" && c.b)
-    return `<td><span class="badge ${c.b}">${c.t}</span></td>`;
-  return `<td>${c}</td>`;
+    return `<td><span class="badge ${esc(c.b)}">${esc(c.t)}</span></td>`;
+  return `<td>${esc(c)}</td>`;
 }
 
 /* ---- Хәбәрләр / toasts ---- */
@@ -127,7 +131,7 @@ function toast(good, text) {
   el.className = "toast" + (good ? "" : " bad");
   const face = good ? "assets/face-happy.svg" : "assets/face-angry.svg";
   const word = good ? pick(PRAISE) : pick(CURSES);
-  el.innerHTML = `<img src="${face}" alt=""><div><b>${word}</b><br>${text}</div>`;
+  el.innerHTML = `<img src="${face}" alt=""><div><b>${esc(word)}</b><br>${esc(text)}</div>`;
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 5000);
 }
@@ -136,8 +140,9 @@ function toast(good, text) {
 function checkTea() {
   const st = teaState(new Date());
   const ov = document.getElementById("tea-overlay");
-  document.getElementById("mood-face").src =
-    st.onBreak ? "assets/face-tea.svg" : "assets/face-happy.svg";
+  const mf = document.getElementById("mood-face");
+  mf.src = st.onBreak ? "assets/face-tea.svg" : "assets/face-happy.svg";
+  mf.alt = st.onBreak ? "Түбәтәйле йөз чәй эчә" : "Түбәтәйле шат йөз";
   if (st.onBreak) {
     document.getElementById("tea-left").textContent = st.left;
     ov.hidden = false;
@@ -153,14 +158,22 @@ function spinTicker() {
 }
 
 /* ---- Башлау / init ---- */
+function selectView(li) {
+  document.querySelectorAll(".side li").forEach((x) => {
+    x.classList.remove("active");
+    x.setAttribute("aria-selected", "false");
+  });
+  li.classList.add("active");
+  li.setAttribute("aria-selected", "true");
+  const key = li.dataset.view;
+  renderView(key);
+  if (Math.random() < 0.75) toast(true, `«${DATA[key].title}» ачылды. ${pick(FOODS)}`);
+  else toast(false, "Мәйдан табылмады, тагын кара.");
+}
 document.querySelectorAll(".side li").forEach((li) => {
-  li.addEventListener("click", () => {
-    document.querySelectorAll(".side li").forEach((x) => x.classList.remove("active"));
-    li.classList.add("active");
-    const key = li.dataset.view;
-    renderView(key);
-    if (Math.random() < 0.75) toast(true, `«${DATA[key].title}» ачылды. ${pick(FOODS)}`);
-    else toast(false, "Мәйдан табылмады, тагын кара.");
+  li.addEventListener("click", () => selectView(li));
+  li.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectView(li); }
   });
 });
 
