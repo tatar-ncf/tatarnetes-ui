@@ -1,0 +1,20 @@
+name: release
+on:
+  push:
+    tags:
+      - "v*"
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: tar czf "tatarnetes-ui-${GITHUB_REF_NAME}.tar.gz" index.html style.css app.js assets LICENSE NOTICE README.md
+      - run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "Татарнетес UI ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            "tatarnetes-ui-${GITHUB_REF_NAME}.tar.gz"

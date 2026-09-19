@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- Чәй эчүче түбәтәйле йөз / face having tea in a tюбетейка -->
+  <circle cx="100" cy="108" r="60" fill="#f2d7ad" stroke="#c99a5a" stroke-width="3"/>
+  <path d="M42 76 Q100 20 158 76 Q100 64 42 76 Z" fill="#1f8a4c" stroke="#12693a" stroke-width="3"/>
+  <path d="M42 76 Q100 90 158 76" fill="none" stroke="#e3a81a" stroke-width="4"/>
+  <g fill="#e3a81a"><path d="M100 38 l6 10 -6 10 -6 -10 Z"/><circle cx="74" cy="58" r="3"/><circle cx="126" cy="58" r="3"/></g>
+  <!-- Йомык күзләр / closed content eyes -->
+  <g stroke="#241a0d" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M74 106 Q82 100 90 106"/><path d="M110 106 Q118 100 126 106"/>
+  </g>
+  <g fill="#e88" opacity="0.55"><circle cx="72" cy="122" r="7"/><circle cx="128" cy="122" r="7"/></g>
+  <!-- Тыныч елмаю / calm smile -->
+  <path d="M84 128 Q100 142 116 128" fill="none" stroke="#241a0d" stroke-width="4" stroke-linecap="round"/>
+  <!-- Чынаяк / tea cup -->
+  <g transform="translate(138,120)">
+    <path d="M0 6 h26 v10 a13 13 0 0 1 -26 0 Z" fill="#fff" stroke="#d21f2a" stroke-width="2.5"/>
+    <path d="M26 8 q10 2 6 12" fill="none" stroke="#d21f2a" stroke-width="2.5"/>
+    <!-- Пар / steam -->
+    <g fill="none" stroke="#fbf6e9" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+      <path d="M8 2 q4 -6 0 -12"/><path d="M18 2 q4 -6 0 -12"/>
+    </g>
+  </g>
+</svg>

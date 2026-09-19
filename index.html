@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Татарнетес Идарә Панеле · Tatarnetes Panel</title>
+<link rel="icon" href="assets/tatarnetes-logo.svg" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Чәй тәнәфесе тәрәзәсе / tea-break overlay -->
+  <div id="tea-overlay" class="tea-overlay" hidden>
+    <div class="tea-card">
+      <div class="tea-emoji">🍵🫓🥟🍯</div>
+      <img src="assets/face-tea.svg" alt="түбәтәйле йөз" class="tea-face" />
+      <h1>Сөтле чәй һәм кыстыбый тәнәфесе</h1>
+      <p class="tt">Татарнетес хәзер чәй эчә. Кыстырылма, туганкай — безгә дә
+        чәй эчәргә кирәк! Зинһар, <b><span id="tea-left">берничә</span> минуттан</b>
+        соң тагын кереп кара.</p>
+      <p class="en"><i>Tatarnetes is having tea with milk and kыstybyй. Please don't
+        bother us — try again in a few minutes.</i></p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/tatarnetes-logo.svg" alt="Tatarnetes" class="logo" />
+      <div>
+        <div class="brand-tt">ТАТАРНЕТЕС</div>
+        <div class="brand-en">Tatarnetes · Идарә Панеле / Control Panel</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <img src="assets/face-happy.svg" id="mood-face" alt="мәйданчы" class="mood" />
+      <span id="cluster-name">төркем: tatar-cluster-1</span>
+    </div>
+  </header>
+
+  <!-- Тукай / ризык бегущая юл / garnish ticker -->
+  <div class="ticker"><span id="ticker-text">…</span></div>
+
+  <main>
+    <nav class="side">
+      <div class="side-title">Асыллар / Resources</div>
+      <ul>
+        <li class="active" data-view="kuzaklar">🫛 Кузаклар <small>(pods)</small></li>
+        <li data-view="toennar">🔗 Төеннәр <small>(nodes)</small></li>
+        <li data-view="hezmatler">🤝 Хезмәтләр <small>(services)</small></li>
+        <li data-view="urnashtyru">📦 Урнаштырулар <small>(deployments)</small></li>
+        <li data-view="maydannar">🏛 Мәйданнар <small>(namespaces)</small></li>
+      </ul>
+      <div class="side-foot">
+        <div>Tatarch License 2.0</div>
+        <div>© Бөек татар халкына</div>
+      </div>
+    </nav>
+
+    <section class="content">
+      <div class="view-head">
+        <h2 id="view-title">Кузаклар / Pods</h2>
+        <div class="cmd-hint">эквивалент: <code id="cmd-hint">ayda күрсәт кузаклар</code></div>
+      </div>
+      <table class="grid">
+        <thead id="grid-head"></thead>
+        <tbody id="grid-body"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Уңыш/хата хәбәрләре / toasts -->
+  <div id="toast-wrap" class="toast-wrap"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

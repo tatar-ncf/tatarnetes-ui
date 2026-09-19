@@ -1,0 +1,29 @@
+name: upstream-watch
+# Kubernetes Dashboard'ның яңа тотрыклы версиясен күзәтә.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: read
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      UPSTREAM: kubernetes/dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check latest upstream stable
+        run: |
+          latest=$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)
+          pinned=$(cat .upstream-version 2>/dev/null || echo "none")
+          echo "upstream latest: $latest | pinned: $pinned"
+          [ "$latest" = "$pinned" ] && { echo "up to date"; exit 0; }
+          title="Upstream Kubernetes Dashboard $latest available"
+          existing=$(gh issue list --search "$title in:title" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          [ -n "$existing" ] && { echo "already tracked #$existing"; exit 0; }
+          body="Апстрим Dashboard яңа тотрыклы версия: **$latest** (хәзерге \`$pinned\`). Татарлаштыру кирәк. / New upstream stable Dashboard: $latest (pinned $pinned)."
+          gh issue create --title "$title" --body "$body" --label upstream 2>/dev/null \
+            || gh issue create --title "$title" --body "$body"

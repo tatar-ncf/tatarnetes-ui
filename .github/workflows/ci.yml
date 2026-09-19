@@ -1,0 +1,28 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assets present
+        run: |
+          set -e
+          for f in index.html style.css app.js \
+                   assets/carpet.svg assets/face-happy.svg assets/face-angry.svg \
+                   assets/face-tea.svg assets/tatarnetes-logo.svg; do
+            test -f "$f" || { echo "юк / missing: $f"; exit 1; }
+          done
+      - name: Tea-schedule logic (node)
+        run: |
+          node - <<'JS'
+          const TEA_BREAKS_PER_DAY=3, TEA_BREAK_MIN=7;
+          function teaWindowsFor(d){const s=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+            const o=[];for(let i=1;i<=TEA_BREAKS_PER_DAY;i++)o.push([(s*(i*37+13)+i*101)%1440,TEA_BREAK_MIN]);return o;}
+          const w=teaWindowsFor(new Date('2026-09-19'));
+          if(w.length!==3){console.error('expected 3 windows');process.exit(1);}
+          console.log('◆ tea windows ok:', JSON.stringify(w));
+          JS
+      - name: HTML sanity
+        run: grep -q "Татарнетес" index.html && echo "◆ html ok"
