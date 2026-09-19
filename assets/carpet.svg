@@ -1,30 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
-  <!-- Татар келәме бизәге / tileable Tatar carpet ornament -->
-  <rect width="220" height="220" fill="#0f5c34"/>
-  <g stroke="#12693a" stroke-width="2" fill="none">
-    <path d="M0 110 L110 0 L220 110 L110 220 Z"/>
-    <path d="M110 0 L220 0 L220 110 M0 110 L0 220 L110 220 M110 0 L0 0 L0 110 M220 110 L220 220 L110 220"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <!-- Татар келәме: лалә (тюльпан) + ислими үрмәсе + тамга. Tiling carpet:
+       Tatar tulip, islimi vine scroll, and a central tamga. -->
+  <rect width="240" height="240" fill="#0f5c34"/>
+
+  <!-- Ислими үрмәсе (кырыйлар буйлап) / islimi vine along the edges -->
+  <g fill="none" stroke="#12693a" stroke-width="3">
+    <path d="M0 20 Q60 0 120 20 T240 20"/>
+    <path d="M0 220 Q60 240 120 220 T240 220"/>
+    <path d="M20 0 Q0 60 20 120 T20 240"/>
+    <path d="M220 0 Q240 60 220 120 T220 240"/>
   </g>
-  <!-- Урта ромб / central diamond -->
-  <g transform="translate(110,110)">
-    <path d="M0 -46 L46 0 L0 46 L-46 0 Z" fill="#12693a" stroke="#e3a81a" stroke-width="2.5"/>
-    <path d="M0 -30 L30 0 L0 30 L-30 0 Z" fill="#0f5c34" stroke="#d21f2a" stroke-width="2"/>
-    <!-- лалә (тюльпан) / tulip -->
-    <g fill="#e3a81a">
-      <path d="M0 -18 C -8 -18 -10 -6 0 2 C 10 -6 8 -18 0 -18 Z"/>
-      <circle cx="0" cy="10" r="3"/>
+  <g fill="#e3a81a">
+    <circle cx="60" cy="10" r="2.5"/><circle cx="180" cy="10" r="2.5"/>
+    <circle cx="60" cy="230" r="2.5"/><circle cx="180" cy="230" r="2.5"/>
+    <circle cx="10" cy="60" r="2.5"/><circle cx="10" cy="180" r="2.5"/>
+    <circle cx="230" cy="60" r="2.5"/><circle cx="230" cy="180" r="2.5"/>
+  </g>
+
+  <!-- Үзәк ромб + тамга / central diamond with a tamga mark -->
+  <g transform="translate(120,120)">
+    <path d="M0 -54 L54 0 L0 54 L-54 0 Z" fill="#12693a" stroke="#e3a81a" stroke-width="2.5"/>
+    <path d="M0 -38 L38 0 L0 38 L-38 0 Z" fill="#0f5c34" stroke="#d21f2a" stroke-width="2"/>
+    <!-- Тамга (родовой знак) — стилизованный -->
+    <g stroke="#e3a81a" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M0 -20 V 16"/>
+      <path d="M-14 -8 Q0 -20 14 -8"/>
+      <path d="M-12 12 H 12"/>
     </g>
   </g>
-  <!-- Почмак розеткалары / corner rosettes -->
-  <g fill="#d21f2a">
-    <circle cx="0" cy="0" r="7"/><circle cx="220" cy="0" r="7"/>
-    <circle cx="0" cy="220" r="7"/><circle cx="220" cy="220" r="7"/>
-    <circle cx="0" cy="0" r="3" fill="#e3a81a"/><circle cx="220" cy="0" r="3" fill="#e3a81a"/>
-    <circle cx="0" cy="220" r="3" fill="#e3a81a"/><circle cx="220" cy="220" r="3" fill="#e3a81a"/>
-  </g>
-  <!-- Кырый вак бизәк / small edge dots -->
-  <g fill="#e3a81a">
-    <circle cx="110" cy="8" r="3"/><circle cx="110" cy="212" r="3"/>
-    <circle cx="8" cy="110" r="3"/><circle cx="212" cy="110" r="3"/>
+
+  <!-- Дүрт лалә (тюльпан) / four tulips toward the corners -->
+  <g fill="#d21f2a" stroke="#e3a81a" stroke-width="1.5">
+    <g transform="translate(120,54)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(120,186) rotate(180)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(54,120) rotate(-90)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(186,120) rotate(90)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
   </g>
 </svg>
