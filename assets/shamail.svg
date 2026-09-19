@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="140" viewBox="0 0 600 140">
+  <!-- Шамаиль стилендәге баннер / shamail-style calligraphic banner.
+       Гарәп язуында «Татарнетес» (بارك الله) бизәкле рамкада. Decorative. -->
+  <rect width="600" height="140" rx="10" fill="#0f5c34"/>
+  <!-- Алтын бизәкле рамка / ornate gold frame -->
+  <rect x="10" y="10" width="580" height="120" rx="8" fill="none" stroke="#e3a81a" stroke-width="4"/>
+  <rect x="18" y="18" width="564" height="104" rx="6" fill="none" stroke="#e3a81a" stroke-width="1.5" stroke-dasharray="2 6"/>
+  <!-- Почмак лаләләре / corner tulips -->
+  <g fill="#d21f2a" stroke="#e3a81a" stroke-width="1">
+    <path d="M40 34 C32 34 30 24 35 20 C37 25 39 24 40 18 C41 24 43 25 45 20 C50 24 48 34 40 34 Z"/>
+    <path d="M560 34 C552 34 550 24 555 20 C557 25 559 24 560 18 C561 24 563 25 565 20 C570 24 568 34 560 34 Z"/>
+    <path d="M40 122 C32 122 30 112 35 108 C37 113 39 112 40 106 C41 112 43 113 45 108 C50 112 48 122 40 122 Z"/>
+    <path d="M560 122 C552 122 550 112 555 108 C557 113 559 112 560 106 C561 112 563 113 565 108 C570 112 568 122 560 122 Z"/>
+  </g>
+  <!-- Гарәп каллиграфиясе: «Татарнетес» / Arabic calligraphy (decorative) -->
+  <text x="300" y="82" text-anchor="middle" font-family="'Scheherazade New','Amiri','Noto Naskh Arabic',serif"
+        font-size="52" fill="#e3a81a" direction="rtl">تاتارنيتيس</text>
+  <text x="300" y="112" text-anchor="middle" font-family="Georgia,serif" font-size="13"
+        fill="#fbf6e9" letter-spacing="4">ТАТАРНЕТЕС · بارك الله</text>
+</svg>

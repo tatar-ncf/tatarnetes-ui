@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
   <!-- Ачулы түбәтәйле йөз / angry face in a tюбетейка -->
-  <circle cx="100" cy="112" r="62" fill="#f2c9a0" stroke="#c98a4a" stroke-width="3"/>
+  <circle cx="100" cy="112" r="62" fill="#f2d7ad" stroke="#c99a5a" stroke-width="3"/>
   <path d="M40 78 Q100 20 160 78 Q100 66 40 78 Z" fill="#d21f2a" stroke="#9c141d" stroke-width="3"/>
   <path d="M40 78 Q100 92 160 78" fill="none" stroke="#e3a81a" stroke-width="4"/>
   <g fill="#e3a81a"><path d="M100 40 l6 10 -6 10 -6 -10 Z"/><circle cx="72" cy="60" r="3"/><circle cx="128" cy="60" r="3"/></g>

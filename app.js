@@ -20,6 +20,17 @@ const PRAISE = ["Афәрин!", "Маладис!", "Бик шәп!", "Тата�
 const CURSES = ["Җүләр!", "Тинтәк!", "Мокыт!", "Аңгыра баш!", "Кит моннан!"];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 
+/* ---- Тамга (родовой знак) төеннәр өчен / tamga marks as node identifiers ---- */
+const _tamga = (paths) =>
+  `<svg width="26" height="26" viewBox="0 0 24 24" aria-label="тамга" role="img">` +
+  `<g fill="none" stroke="#1f8a4c" stroke-width="2" stroke-linecap="round">${paths}</g></svg>`;
+const TAMGA = [
+  _tamga('<path d="M12 4v14"/><path d="M6 8q6-6 12 0"/><path d="M6 16h12"/>'),
+  _tamga('<circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4"/>'),
+  _tamga('<path d="M5 6l7 12 7-12"/><path d="M5 18h14"/>'),
+  _tamga('<path d="M12 3l8 8-8 8-8-8z"/><path d="M12 8v8"/>'),
+];
+
 /* ---- Чәй тәнәфесе графигы (lib/teatime.sh белән бер үк) ----
    Deterministic tea windows derived from the calendar day, matching the CLI. */
 const TEA_BREAKS_PER_DAY = 3;
@@ -61,11 +72,11 @@ const DATA = {
   toennar: {
     title: "Төеннәр / Nodes",
     cmd: "ayda күрсәт төеннәр",
-    head: ["ИСЕМ / NAME", "ХӘЛ", "РОЛЬ", "ЯШЬ", "ВЕРСИЯ"],
+    head: ["ТАМГА", "ИСЕМ / NAME", "ХӘЛ", "РОЛЬ", "ЯШЬ", "ВЕРСИЯ"],
     rows: [
-      ["tatar-node-kazan", ok("Әзер/Ready"), "control-plane", "40k", "v2.0.0"],
-      ["tatar-node-cally", ok("Әзер/Ready"), "эшче/worker", "40k", "v2.0.0"],
-      ["tatar-node-alabuga", warn("Әзер,SchedДисабл"), "эшче/worker", "40k", "v2.0.0"],
+      [{ svg: TAMGA[0] }, "tatar-node-kazan", ok("Әзер/Ready"), "control-plane", "40k", "v2.1.0"],
+      [{ svg: TAMGA[1] }, "tatar-node-cally", ok("Әзер/Ready"), "эшче/worker", "40k", "v2.1.0"],
+      [{ svg: TAMGA[2] }, "tatar-node-alabuga", warn("Әзер,SchedДисабл"), "эшче/worker", "40k", "v2.1.0"],
     ],
   },
   hezmatler: {
@@ -119,6 +130,8 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (m) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 
 function cellHtml(c) {
+  if (c && typeof c === "object" && c.svg)   // тамга — ышанычлы статик SVG / trusted static SVG
+    return `<td class="tamga-cell">${c.svg}</td>`;
   if (c && typeof c === "object" && c.b)
     return `<td><span class="badge ${esc(c.b)}">${esc(c.t)}</span></td>`;
   return `<td>${esc(c)}</td>`;
