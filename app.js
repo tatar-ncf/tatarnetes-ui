@@ -138,7 +138,11 @@ function toast(good, text) {
 
 /* ---- Чәй тәрәзәсен тикшерү / tea gate ---- */
 function checkTea() {
-  const st = teaState(new Date());
+  // Демо-өстенлекләр / demo overrides: ?tea=1 мәҗбүри, ?notea=1 сүндерә.
+  const q = new URLSearchParams(location.search);
+  let st = teaState(new Date());
+  if (q.has("tea")) st = { onBreak: true, left: 7 };
+  if (q.has("notea")) st = { onBreak: false, left: 0 };
   const ov = document.getElementById("tea-overlay");
   const mf = document.getElementById("mood-face");
   mf.src = st.onBreak ? "assets/face-tea.svg" : "assets/face-happy.svg";
