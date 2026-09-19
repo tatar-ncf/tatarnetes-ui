@@ -82,6 +82,9 @@ main{display:flex;gap:16px;padding:16px;align-items:flex-start}
 /* --- Чәй тәрәзәсе / tea overlay --- */
 .tea-overlay{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
   background:rgba(15,92,52,.92);background-image:url("assets/carpet.svg");background-size:180px}
+/* [hidden] атрибутын хөрмәт итү — .tea-overlay display:flex аны басмасын өчен.
+   Honour the [hidden] attribute (author display:flex would otherwise override it). */
+.tea-overlay[hidden]{display:none}
 .tea-card{max-width:520px;text-align:center;background:var(--tat-cream);border-radius:18px;
   padding:28px 30px;border:4px solid var(--tat-gold);box-shadow:0 12px 40px rgba(0,0,0,.4)}
 .tea-emoji{font-size:34px;letter-spacing:6px}

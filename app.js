@@ -194,7 +194,12 @@ document.querySelectorAll(".side li").forEach((li) => {
   });
 });
 
-renderView("kuzaklar");
+// Башлангыч күренеш ?view= аша сайланырга мөмкин / initial view via ?view= (deep-link).
+(function initView() {
+  const want = new URLSearchParams(location.search).get("view");
+  const li = want && document.querySelector(`.side li[data-view="${want}"]`);
+  if (li) { selectView(li); } else { renderView("kuzaklar"); }
+})();
 spinTicker();
 checkTea();
 setInterval(spinTicker, 26000);

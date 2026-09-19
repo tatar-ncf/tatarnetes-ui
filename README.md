@@ -13,7 +13,13 @@
 
 [Татарча](#татарча) · [English](#english)
 
+<img src="docs/media/ui-tour.gif" width="640" alt="Tatarnetes UI tour" />
+
 </div>
+
+> Күренешләр: [дашборд](docs/media/dashboard.png) ·
+> [төеннәр + тамга](docs/media/nodes-tamga.png) ·
+> [чәй тәнәфесе + шамаиль](docs/media/tea-shamail.png)
 
 ---
 
