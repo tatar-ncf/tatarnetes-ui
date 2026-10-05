@@ -1,13 +1,20 @@
-/* Татарнетес UI — демо мәгълүматлар, чәй тәнәфесе, Тукай тасмасы, хәбәрләр.
-   Demo dashboard logic: fake resources, tea-break gate (mirrors lib/teatime.sh),
-   Tukay/food ticker, success/error toasts. No backend required. */
+/* Татарнетес UI — ике режим: ДЕМО (ялган мәгълүмат, гадәттә) һәм ҖАНЛЫ
+   (чын кластер, kubectl proxy аша, ?api=… яки config.js). Чәй тәнәфесе,
+   Тукай тасмасы, хәбәрләр.
+   Two modes: DEMO (fake data, the default) and LIVE (a real cluster through
+   kubectl proxy, enabled by ?api=… or config.js). Pure logic is in lib.js. */
+"use strict";
+const T = window.TatarUI;
 
-/* ---- Тукай юллары / Tukay lines (original) ---- */
-const TUKAY = [
-  "И туган тел, и матур тел, әткәм-әнкәмнең теле! — Г. Тукай, «Туган тел»",
-  "Иң элек бу тел белән әнкәм бишектә көйләгән… — Г. Тукай, «Туган тел»",
-  "Җиктереп пар ат, Казанга туп-туры киттем карап… — Г. Тукай, «Пар ат»",
-  "Нәкъ Казан артында бардыр бер авыл — «Кырлай» диләр… — Г. Тукай, «Шүрәле»",
+/* ---- Классик поэзия — tatarnetes/data/poetry.tt'тан, тикшерелгән юллар гына ----
+   Verified lines only, copied from tatarnetes data/poetry.tt (see its
+   VERIFICATION.tt.md); attribution exactly as recorded there. */
+const POETRY = [
+  "И туган тел, и матур тел, әткәм-әнкәмнең теле! — Габдулла Тукай, «Туган тел» (1909)",
+  "Иң элек бу тел белән әнкәм бишектә көйләгән… — Габдулла Тукай, «Туган тел» (1909)",
+  "Нәкъ Казан артында бардыр бер авыл — «Кырлай» диләр… — Габдулла Тукай, «Туган авыл»",
+  "Шаулый диңгез... Җил өрәдер... Җилкәнен киргән кораб! — Дәрдмәнд, «Кораб»",
+  "Җырлап үттем данлы көрәш кырын… — Муса Җәлил, «Җырлап үтәм» (Моабит дәфтәре)",
 ];
 const FOODS = [
   "🥟 Өчпочмак — эчендә ит тә, бәрәңге дә!",
@@ -20,7 +27,8 @@ const PRAISE = ["Афәрин!", "Маладис!", "Бик шәп!", "Тата�
 const CURSES = ["Җүләр!", "Тинтәк!", "Мокыт!", "Аңгыра баш!", "Кит моннан!"];
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 
-/* ---- Тамга (родовой знак) төеннәр өчен / tamga marks as node identifiers ---- */
+/* ---- Тамга (родовой знак) төеннәр өчен — статик, ышанычлы SVG ----
+   Static, trusted SVG; cells only ever carry an index into this array. */
 const _tamga = (paths) =>
   `<svg width="26" height="26" viewBox="0 0 24 24" aria-label="тамга" role="img">` +
   `<g fill="none" stroke="#1f8a4c" stroke-width="2" stroke-linecap="round">${paths}</g></svg>`;
@@ -31,110 +39,138 @@ const TAMGA = [
   _tamga('<path d="M12 3l8 8-8 8-8-8z"/><path d="M12 8v8"/>'),
 ];
 
-/* ---- Чәй тәнәфесе графигы (lib/teatime.sh белән бер үк) ----
-   Deterministic tea windows derived from the calendar day, matching the CLI. */
-const TEA_BREAKS_PER_DAY = 3;
-const TEA_BREAK_MIN = 7;
-function teaWindowsFor(date) {
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  const d = date.getDate();
-  const seed = y * 10000 + m * 100 + d; // YYYYMMDD
-  const out = [];
-  for (let i = 1; i <= TEA_BREAKS_PER_DAY; i++) {
-    const start = (seed * (i * 37 + 13) + i * 101) % 1440;
-    out.push([start, TEA_BREAK_MIN]);
-  }
-  return out;
-}
-function teaState(date) {
-  const now = date.getHours() * 60 + date.getMinutes();
-  for (const [s, dur] of teaWindowsFor(date)) {
-    if (now >= s && now < s + dur) return { onBreak: true, left: s + dur - now };
-  }
-  return { onBreak: false, left: 0 };
-}
-
-/* ---- Демо асыллар / fake resources ---- */
-const DATA = {
-  kuzaklar: {
-    title: "Кузаклар / Pods",
-    cmd: "ayda күрсәт кузаклар",
-    head: ["ИСЕМ / NAME", "МӘЙДАН / NS", "ХӘЛ / STATUS", "ЯҢАРУ", "ЯШЬ"],
-    rows: [
-      ["ecpocmak-web-7d9", "gadati", ok("Эшли/Running"), "0", "3k 12s"],
-      ["cakcak-api-5f2", "gadati", ok("Эшли/Running"), "1", "6k 4s"],
-      ["kystybyj-cache-0", "kaz", warn("Күтәрелә/Pending"), "0", "34s"],
-      ["balis-worker-2a", "yshler", ok("Эшли/Running"), "0", "1k 2s"],
-      ["gubadiya-cron-9", "yshler", err("Егылды/CrashLoop"), "7", "12k 9s"],
-    ],
-  },
-  toennar: {
-    title: "Төеннәр / Nodes",
-    cmd: "ayda күрсәт төеннәр",
-    head: ["ТАМГА", "ИСЕМ / NAME", "ХӘЛ", "РОЛЬ", "ЯШЬ", "ВЕРСИЯ"],
-    rows: [
-      [{ svg: TAMGA[0] }, "tatar-node-kazan", ok("Әзер/Ready"), "control-plane", "40k", "v2.1.0"],
-      [{ svg: TAMGA[1] }, "tatar-node-cally", ok("Әзер/Ready"), "эшче/worker", "40k", "v2.1.0"],
-      [{ svg: TAMGA[2] }, "tatar-node-alabuga", warn("Әзер,SchedДисабл"), "эшче/worker", "40k", "v2.1.0"],
-    ],
-  },
-  hezmatler: {
-    title: "Хезмәтләр / Services",
-    cmd: "ayda күрсәт хезмәтләр",
-    head: ["ИСЕМ / NAME", "ТӨР", "CLUSTER-IP", "ПОРТ", "ЯШЬ"],
-    rows: [
-      ["ecpocmak-web", "ClusterIP", "10.96.0.11", "80/TCP", "3k"],
-      ["cakcak-api", "LoadBalancer", "10.96.0.24", "443/TCP", "6k"],
-      ["capka-ingress", "NodePort", "10.96.0.30", "31380", "6k"],
-    ],
-  },
-  urnashtyru: {
-    title: "Урнаштырулар / Deployments",
-    cmd: "ayda күрсәт урнаштырулар",
-    head: ["ИСЕМ / NAME", "ӘЗЕР", "ЯҢАРТЫЛГАН", "БАР", "ЯШЬ"],
-    rows: [
-      ["ecpocmak-web", ok("3/3"), "3", "3", "3k"],
-      ["cakcak-api", ok("2/2"), "2", "2", "6k"],
-      ["gubadiya-cron", err("0/1"), "1", "0", "12k"],
-    ],
-  },
-  maydannar: {
-    title: "Мәйданнар / Namespaces",
-    cmd: "ayda күрсәт мәйданнар",
-    head: ["ИСЕМ / NAME", "ХӘЛ", "ЯШЬ"],
-    rows: [
-      ["gadati", ok("Актив/Active"), "40k"],
-      ["kaz", ok("Актив/Active"), "40k"],
-      ["yshler", ok("Актив/Active"), "40k"],
-      ["tatar-tozem", ok("Актив/Active"), "40k"],
-    ],
-  },
+/* ---- Демо асыллар / fake resources (DEMO mode) ---- */
+const ok = (t) => ({ b: "ok", t }), warn = (t) => ({ b: "warn", t }), err = (t) => ({ b: "err", t });
+const DEMO = {
+  kuzaklar: [
+    ["ecpocmak-web-7d9", "gadati", ok("Эшли/Running"), "0", "3 көн 12 сәг"],
+    ["cakcak-api-5f2", "gadati", ok("Эшли/Running"), "1", "6 көн 4 сәг"],
+    ["kystybyj-cache-0", "kaz", warn("Көтә/Pending"), "0", "34 сек"],
+    ["balis-worker-2a", "yshler", ok("Эшли/Running"), "0", "1 көн 2 сәг"],
+    ["gubadiya-cron-9", "yshler", err("Егылды/CrashLoopBackOff"), "7", "12 көн"],
+  ],
+  toennar: [
+    [{ tamga: 0 }, "tatar-node-kazan", ok("Әзер/Ready"), "баш идарә/control-plane", "40 көн", "v1.37.1"],
+    [{ tamga: 1 }, "tatar-node-cally", ok("Әзер/Ready"), "эшче/worker", "40 көн", "v1.37.1"],
+    [{ tamga: 2 }, "tatar-node-alabuga", warn("Әзер/Ready, SchedulingDisabled"), "эшче/worker", "40 көн", "v1.37.1"],
+  ],
+  hezmatler: [
+    ["ecpocmak-web", "gadati", "ClusterIP", "10.96.0.11", "80/TCP", "3 көн"],
+    ["cakcak-api", "gadati", "LoadBalancer", "10.96.0.24", "443:31443/TCP", "6 көн"],
+    ["capka-ingress", "kaz", "NodePort", "10.96.0.30", "80:31380/TCP", "6 көн"],
+  ],
+  urnashtyru: [
+    ["ecpocmak-web", "gadati", ok("3/3"), "3", "3", "3 көн"],
+    ["cakcak-api", "gadati", ok("2/2"), "2", "2", "6 көн"],
+    ["gubadiya-cron", "yshler", err("0/1"), "1", "0", "12 көн"],
+  ],
+  maydannar: [
+    ["gadati", ok("Актив/Active"), "40 көн"],
+    ["kaz", ok("Актив/Active"), "40 көн"],
+    ["yshler", ok("Актив/Active"), "40 көн"],
+    ["tatar-tozem", ok("Актив/Active"), "40 көн"],
+  ],
+  vakygalar: [
+    [warn("Кисәтү/Warning"), "BackOff", "pod/gubadiya-cron-9", "yshler", "Back-off restarting failed container", "2 мин"],
+    [ok("Гадәти/Normal"), "Scheduled", "pod/kystybyj-cache-0", "kaz", "Successfully assigned kaz/kystybyj-cache-0", "34 сек"],
+    [ok("Гадәти/Normal"), "ScalingReplicaSet", "deployment/ecpocmak-web", "gadati", "Scaled up replica set to 3", "3 көн"],
+  ],
 };
-function ok(t){return {b:"ok",t}} function warn(t){return {b:"warn",t}} function err(t){return {b:"err",t}}
 
-/* ---- Рендер / render ---- */
-function renderView(key) {
-  const v = DATA[key];
-  document.getElementById("view-title").textContent = v.title;
-  document.getElementById("cmd-hint").textContent = v.cmd;
-  const head = document.getElementById("grid-head");
-  head.innerHTML = "<tr>" + v.head.map((h) => `<th>${esc(h)}</th>`).join("") + "</tr>";
-  const body = document.getElementById("grid-body");
-  body.innerHTML = v.rows.map((r) =>
-    "<tr>" + r.map(cellHtml).join("") + "</tr>"
-  ).join("");
-}
-// HTML-экранлау / escape untrusted text before it touches innerHTML.
-const esc = (s) => String(s).replace(/[&<>"']/g, (m) =>
-  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+/* ---- Режим / mode: ?api= өстен, аннары config.js; юк икән — демо ---- */
+const Q = new URLSearchParams(location.search);
+const CFG = window.TATARNETES_UI_CONFIG || {};
+const MODE = T.resolveApiBase(Q.get("api"), CFG.api, location.origin);
+const NS = Q.get("ns") || CFG.namespace || "";
+const POLL_MS = 10000;
+let current = "kuzaklar";
+let seq = 0;          // соңгы сорау гына күрсәтелә / only the latest request renders
+let loadedOnce = {};  // беренче йөкләүдә генә «Йөкләнә…» / spinner on first load only
 
+/* ---- Рендер / render (барлык текст esc() аша / every string goes through esc) ---- */
 function cellHtml(c) {
-  if (c && typeof c === "object" && c.svg)   // тамга — ышанычлы статик SVG / trusted static SVG
-    return `<td class="tamga-cell">${c.svg}</td>`;
+  if (c && typeof c === "object" && Number.isInteger(c.tamga))
+    return `<td class="tamga-cell">${TAMGA[c.tamga % TAMGA.length]}</td>`;
   if (c && typeof c === "object" && c.b)
-    return `<td><span class="badge ${esc(c.b)}">${esc(c.t)}</span></td>`;
-  return `<td>${esc(c)}</td>`;
+    return `<td><span class="badge ${T.esc(c.b)}">${T.esc(c.t)}</span></td>`;
+  return `<td>${T.esc(c)}</td>`;
+}
+function renderHead(key) {
+  const v = T.VIEWS[key];
+  document.getElementById("view-title").textContent = v.title;
+  let cmd = `ayda күрсәт ${v.noun}`;
+  if (MODE.mode === "live" && v.namespaced) cmd += NS ? ` -n ${NS}` : " -A";
+  document.getElementById("cmd-hint").textContent = cmd;
+  document.getElementById("grid-head").innerHTML =
+    "<tr>" + v.head.map((h) => `<th>${T.esc(h)}</th>`).join("") + "</tr>";
+}
+function renderRows(rows) {
+  document.getElementById("grid-body").innerHTML =
+    rows.map((r) => "<tr>" + r.map(cellHtml).join("") + "</tr>").join("");
+}
+// Буш/йөкләнү/хата хәле — бер юл / one full-width state row.
+function renderState(kind, text, detail) {
+  const cols = T.VIEWS[current].head.length;
+  const d = detail ? `<div class="state-detail">${T.esc(detail)}</div>` : "";
+  document.getElementById("grid-body").innerHTML =
+    `<tr><td colspan="${cols}" class="state state-${T.esc(kind)}" role="status">` +
+    `${T.esc(text)}${d}</td></tr>`;
+  setMood(kind === "error" ? "angry" : kind === "tea" ? "tea" : null);
+}
+
+function setMood(m) {
+  const mf = document.getElementById("mood-face");
+  if (m === "tea") { mf.src = "assets/face-tea.svg"; mf.alt = "Түбәтәйле йөз чәй эчә"; }
+  else if (m === "angry") { mf.src = "assets/face-angry.svg"; mf.alt = "Түбәтәйле ачулы йөз"; }
+  else { mf.src = "assets/face-happy.svg"; mf.alt = "Түбәтәйле шат йөз"; }
+}
+
+/* ---- Җанлы мәгълүмат / live data via kubectl proxy (same-origin, no token) ---- */
+async function fetchList(key) {
+  const v = T.VIEWS[key];
+  let res;
+  try {
+    res = await fetch(MODE.base + v.path(NS), {
+      headers: { Accept: "application/json" }, credentials: "omit", cache: "no-store",
+    });
+  } catch (e) { throw { kind: "conn", detail: String(e && e.message || e) }; }
+  if (!res.ok) {
+    let detail = "";
+    try { detail = (await res.json()).message || ""; } catch (e) { /* not JSON */ }
+    throw { status: res.status, detail };
+  }
+  try { return await res.json(); } catch (e) { throw { kind: "parse", detail: String(e.message || e) }; }
+}
+
+async function loadView(key, announce) {
+  const my = ++seq;
+  renderHead(key);
+  if (MODE.mode === "error") { renderState("error", T.MSG[MODE.reason]); return; }
+  if (MODE.mode === "demo") {
+    renderRows(DEMO[key]);
+    if (announce) {
+      if (Math.random() < 0.75) toast(true, `«${T.VIEWS[key].title}» ачылды. ${pick(FOODS)}`);
+      else toast(false, "Мәйдан табылмады, тагын кара. (демо)");
+    }
+    return;
+  }
+  if (T.teaState(new Date()).onBreak && !Q.has("notea")) { renderState("tea", T.MSG.tea); return; }
+  if (!loadedOnce[key]) renderState("loading", T.MSG.loading);
+  try {
+    const list = await fetchList(key);
+    if (my !== seq) return;
+    const rows = T.mapList(key, list, Date.now(), TAMGA.length);
+    loadedOnce[key] = true;
+    if (!rows.length) renderState("empty", T.MSG.empty);
+    else { renderRows(rows); setMood(null); }
+    if (announce) toast(true, `«${T.VIEWS[key].title}»: ${rows.length}`);
+  } catch (e) {
+    if (my !== seq) return;
+    loadedOnce[key] = false;
+    const msg = e instanceof Error ? T.MSG.parse : T.errorMessage(e);
+    renderState("error", msg, e && e.detail);
+    if (announce) toast(false, msg);
+  }
 }
 
 /* ---- Хәбәрләр / toasts ---- */
@@ -144,63 +180,86 @@ function toast(good, text) {
   el.className = "toast" + (good ? "" : " bad");
   const face = good ? "assets/face-happy.svg" : "assets/face-angry.svg";
   const word = good ? pick(PRAISE) : pick(CURSES);
-  el.innerHTML = `<img src="${face}" alt=""><div><b>${esc(word)}</b><br>${esc(text)}</div>`;
+  el.innerHTML = `<img src="${face}" alt=""><div><b>${T.esc(word)}</b><br>${T.esc(text)}</div>`;
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 5000);
 }
 
-/* ---- Чәй тәрәзәсен тикшерү / tea gate ---- */
+/* ---- Чәй тәрәзәсе / tea gate (lib/teatime.sh белән бер график) ---- */
+let wasOnBreak = false;
 function checkTea() {
-  // Демо-өстенлекләр / demo overrides: ?tea=1 мәҗбүри, ?notea=1 сүндерә.
-  const q = new URLSearchParams(location.search);
-  let st = teaState(new Date());
-  if (q.has("tea")) st = { onBreak: true, left: 7 };
-  if (q.has("notea")) st = { onBreak: false, left: 0 };
+  // Демо-өстенлекләр / overrides: ?tea=1 мәҗбүри, ?notea=1 сүндерә.
+  let st = T.teaState(new Date());
+  if (Q.has("tea")) st = { onBreak: true, left: T.TEA_BREAK_MIN };
+  if (Q.has("notea")) st = { onBreak: false, left: 0 };
   const ov = document.getElementById("tea-overlay");
-  const mf = document.getElementById("mood-face");
-  mf.src = st.onBreak ? "assets/face-tea.svg" : "assets/face-happy.svg";
-  mf.alt = st.onBreak ? "Түбәтәйле йөз чәй эчә" : "Түбәтәйле шат йөз";
   if (st.onBreak) {
     document.getElementById("tea-left").textContent = st.left;
     ov.hidden = false;
+    setMood("tea");
   } else {
     ov.hidden = true;
+    if (wasOnBreak) loadView(current, false);   // тәнәфестән соң яңарту / refresh after tea
+    else if (document.getElementById("mood-face").src.indexOf("face-tea") >= 0) setMood(null);
   }
+  wasOnBreak = st.onBreak;
 }
 
 /* ---- Тасма / ticker ---- */
 function spinTicker() {
-  const t = Math.random() < 0.5 ? pick(TUKAY) : pick(FOODS);
-  document.getElementById("ticker-text").textContent = t;
+  document.getElementById("ticker-text").textContent =
+    Math.random() < 0.5 ? pick(POETRY) : pick(FOODS);
+}
+
+/* ---- Режим билгесе / mode badge ---- */
+function showMode() {
+  const badge = document.getElementById("mode-badge");
+  const name = document.getElementById("cluster-name");
+  if (MODE.mode === "live") {
+    badge.textContent = "ҖАНЛЫ · LIVE";
+    badge.className = "mode-badge live";
+    name.textContent = `төркем: ${location.host}${MODE.base || "/"}` + (NS ? ` · мәйдан: ${NS}` : "");
+  } else if (MODE.mode === "error") {
+    badge.textContent = "ХАТА · ERROR";
+    badge.className = "mode-badge bad";
+    name.textContent = "төркем: —";
+  } else {
+    badge.textContent = "ДЕМО · DEMO";
+    badge.className = "mode-badge";
+    name.textContent = "төркем: tatar-cluster-1 (демо)";
+  }
 }
 
 /* ---- Башлау / init ---- */
-function selectView(li) {
+function selectView(li, announce) {
   document.querySelectorAll(".side li").forEach((x) => {
     x.classList.remove("active");
     x.setAttribute("aria-selected", "false");
   });
   li.classList.add("active");
   li.setAttribute("aria-selected", "true");
-  const key = li.dataset.view;
-  renderView(key);
-  if (Math.random() < 0.75) toast(true, `«${DATA[key].title}» ачылды. ${pick(FOODS)}`);
-  else toast(false, "Мәйдан табылмады, тагын кара.");
+  current = li.dataset.view;
+  loadView(current, announce);
 }
 document.querySelectorAll(".side li").forEach((li) => {
-  li.addEventListener("click", () => selectView(li));
+  li.addEventListener("click", () => selectView(li, true));
   li.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectView(li); }
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectView(li, true); }
   });
 });
 
-// Башлангыч күренеш ?view= аша сайланырга мөмкин / initial view via ?view= (deep-link).
+showMode();
+checkTea();
+// Башлангыч күренеш ?view= аша / initial view via ?view= (deep-link).
 (function initView() {
-  const want = new URLSearchParams(location.search).get("view");
-  const li = want && document.querySelector(`.side li[data-view="${want}"]`);
-  if (li) { selectView(li); } else { renderView("kuzaklar"); }
+  const want = Q.get("view");
+  const li = (want && T.VIEWS[want] && document.querySelector(`.side li[data-view="${want}"]`)) ||
+    document.querySelector('.side li[data-view="kuzaklar"]');
+  selectView(li, false);
 })();
 spinTicker();
-checkTea();
 setInterval(spinTicker, 26000);
 setInterval(checkTea, 15000);
+if (MODE.mode === "live") {
+  setInterval(() => { if (!document.hidden) loadView(current, false); }, POLL_MS);
+}

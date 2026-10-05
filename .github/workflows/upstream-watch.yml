@@ -17,6 +17,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check latest upstream stable
         run: |
+          if [ "$(gh api "repos/$UPSTREAM" --jq .archived)" = "true" ]; then
+            echo "::notice::$UPSTREAM архивланган / is archived — no new releases expected"
+          fi
           latest=$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)
           pinned=$(cat .upstream-version 2>/dev/null || echo "none")
           echo "upstream latest: $latest | pinned: $pinned"
@@ -24,6 +27,8 @@ jobs:
           title="Upstream Kubernetes Dashboard $latest available"
           existing=$(gh issue list --search "$title in:title" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
           [ -n "$existing" ] && { echo "already tracked #$existing"; exit 0; }
-          body="Апстрим Dashboard яңа тотрыклы версия: **$latest** (хәзерге \`$pinned\`). Татарлаштыру кирәк. / New upstream stable Dashboard: $latest (pinned $pinned)."
+          # Чарт тегы → безнең тег / chart tag → our tag: kubernetes-dashboard-X.Y.Z → vX.Y.Z-tatar.N
+          ours="v${latest#kubernetes-dashboard-}-tatar.N"
+          body="Апстрим Dashboard яңа тотрыклы версия: **$latest** (хәзерге \`$pinned\`). Татарлаштыру кирәк; тег \`$ours\`. / New upstream stable Dashboard: $latest (pinned $pinned); tag \`$ours\`."
           gh label create upstream --color ededed --description "Upstream tracking" 2>/dev/null || true
           gh issue create --title "$title" --body "$body" --label upstream

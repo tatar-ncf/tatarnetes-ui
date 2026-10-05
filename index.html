@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Бары шул ук чыганак: API да, скриптлар да / same-origin only, for the API too -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" />
 <title>Татарнетес Идарә Панеле · Tatarnetes Panel</title>
 <link rel="icon" href="assets/tatarnetes-logo.svg" />
 <link rel="stylesheet" href="style.css" />
@@ -34,7 +37,8 @@
     </div>
     <div class="topbar-right">
       <img src="assets/face-happy.svg" id="mood-face" alt="мәйданчы" class="mood" />
-      <span id="cluster-name">төркем: tatar-cluster-1</span>
+      <span id="mode-badge" class="mode-badge">ДЕМО · DEMO</span>
+      <span id="cluster-name">төркем: tatar-cluster-1 (демо)</span>
     </div>
   </header>
 
@@ -50,6 +54,7 @@
         <li role="tab" tabindex="0" data-view="hezmatler">🤝 Хезмәтләр <small>(services)</small></li>
         <li role="tab" tabindex="0" data-view="urnashtyru">📦 Урнаштырулар <small>(deployments)</small></li>
         <li role="tab" tabindex="0" data-view="maydannar">🏛 Мәйданнар <small>(namespaces)</small></li>
+        <li role="tab" tabindex="0" data-view="vakygalar">📜 Вакыйгалар <small>(events)</small></li>
       </ul>
       <div class="side-foot">
         <div>Tatarch License 2.0</div>
@@ -72,6 +77,8 @@
   <!-- Уңыш/хата хәбәрләре / toasts -->
   <div id="toast-wrap" class="toast-wrap"></div>
 
+  <script src="config.js"></script>
+  <script src="lib.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

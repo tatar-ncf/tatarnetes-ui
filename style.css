@@ -103,3 +103,15 @@ main{display:flex;gap:16px;padding:16px;align-items:flex-start}
 .toast.bad{border-left-color:var(--tat-red)}
 .toast img{width:38px;height:38px}
 @keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+
+/* --- Режим билгесе / mode badge --- */
+.mode-badge{font-size:11px;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:20px;
+  background:var(--tat-cream);color:var(--tat-green-dark);border:1px solid var(--tat-gold)}
+.mode-badge.live{background:var(--tat-gold);color:var(--tat-ink)}
+.mode-badge.bad{background:var(--tat-red);color:#fff}
+
+/* --- Буш / йөкләнә / хата / чәй хәле / empty, loading, error and tea states --- */
+.grid td.state{text-align:center;padding:28px 12px;font-size:15px;color:#5f5030}
+.grid td.state-error{color:var(--tat-red);font-weight:600}
+.grid td.state-loading{font-style:italic}
+.state-detail{margin-top:8px;font-size:12px;font-weight:400;color:#5f5030;font-family:ui-monospace,monospace}
