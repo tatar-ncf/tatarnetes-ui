@@ -18,6 +18,6 @@ jobs:
             test -f "$f" || { echo "юк / missing: $f"; exit 1; }
           done
       - name: Logic tests — tea schedule = CLI formula, live mapping, XSS, same-origin
-        run: node --test tests/
+        run: node --test tests/*.test.js
       - name: HTML sanity
         run: grep -q "Татарнетес" index.html && echo "◆ html ok"
