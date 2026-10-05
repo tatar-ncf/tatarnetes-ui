@@ -12,7 +12,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
-      - run: tar czf "tatarnetes-ui-${GITHUB_REF_NAME}.tar.gz" index.html style.css app.js assets LICENSE NOTICE README.md
+      - run: tar czf "tatarnetes-ui-${GITHUB_REF_NAME}.tar.gz" index.html style.css app.js lib.js config.js assets LICENSE NOTICE README.md
       - run: |
           gh release create "${GITHUB_REF_NAME}" \
             --title "Татарнетес UI ${GITHUB_REF_NAME}" \
