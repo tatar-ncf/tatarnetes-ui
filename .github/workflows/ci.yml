@@ -21,3 +21,24 @@ jobs:
         run: node --test tests/*.test.js
       - name: HTML sanity
         run: grep -q "Татарнетес" index.html && echo "◆ html ok"
+
+  headlamp-plugin:
+    # Headlamp плагины / the Headlamp plugin: type check, tests, build, package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: headlamp-plugin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm run tsc
+      - run: npm test
+      - run: npm run build
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tatarnetes-headlamp-plugin
+          path: headlamp-plugin/*.tar.gz

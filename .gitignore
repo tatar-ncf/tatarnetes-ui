@@ -1,3 +1,6 @@
 *.log
 .DS_Store
 /tmp/
+node_modules/
+headlamp-plugin/dist/
+headlamp-plugin/*.tar.gz

@@ -1,0 +1,53 @@
+/* Татар келәме — ../assets/carpet.svg, сүзгә-сүз (carpet.test.ts тикшерә).
+   The Tatar carpet tile, verbatim from ../assets/carpet.svg (checked by
+   carpet.test.ts), as a CSS background. */
+export const CARPET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <!-- Татар келәме: лалә (тюльпан) + ислими үрмәсе + тамга. Tiling carpet:
+       Tatar tulip, islimi vine scroll, and a central tamga. -->
+  <rect width="240" height="240" fill="#0f5c34"/>
+
+  <!-- Ислими үрмәсе (кырыйлар буйлап) / islimi vine along the edges -->
+  <g fill="none" stroke="#12693a" stroke-width="3">
+    <path d="M0 20 Q60 0 120 20 T240 20"/>
+    <path d="M0 220 Q60 240 120 220 T240 220"/>
+    <path d="M20 0 Q0 60 20 120 T20 240"/>
+    <path d="M220 0 Q240 60 220 120 T220 240"/>
+  </g>
+  <g fill="#e3a81a">
+    <circle cx="60" cy="10" r="2.5"/><circle cx="180" cy="10" r="2.5"/>
+    <circle cx="60" cy="230" r="2.5"/><circle cx="180" cy="230" r="2.5"/>
+    <circle cx="10" cy="60" r="2.5"/><circle cx="10" cy="180" r="2.5"/>
+    <circle cx="230" cy="60" r="2.5"/><circle cx="230" cy="180" r="2.5"/>
+  </g>
+
+  <!-- Үзәк ромб + тамга / central diamond with a tamga mark -->
+  <g transform="translate(120,120)">
+    <path d="M0 -54 L54 0 L0 54 L-54 0 Z" fill="#12693a" stroke="#e3a81a" stroke-width="2.5"/>
+    <path d="M0 -38 L38 0 L0 38 L-38 0 Z" fill="#0f5c34" stroke="#d21f2a" stroke-width="2"/>
+    <!-- Тамга (родовой знак) — стилизованный -->
+    <g stroke="#e3a81a" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M0 -20 V 16"/>
+      <path d="M-14 -8 Q0 -20 14 -8"/>
+      <path d="M-12 12 H 12"/>
+    </g>
+  </g>
+
+  <!-- Дүрт лалә (тюльпан) / four tulips toward the corners -->
+  <g fill="#d21f2a" stroke="#e3a81a" stroke-width="1.5">
+    <g transform="translate(120,54)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(120,186) rotate(180)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(54,120) rotate(-90)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+    <g transform="translate(186,120) rotate(90)">
+      <path d="M0 6 C -12 6 -14 -10 -8 -16 C -6 -8 -3 -10 0 -18 C 3 -10 6 -8 8 -16 C 14 -10 12 6 0 6 Z"/>
+    </g>
+  </g>
+</svg>
+`;
+
+export const carpetBackground = `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(CARPET_SVG)}")`;
