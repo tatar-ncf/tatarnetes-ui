@@ -42,3 +42,58 @@ jobs:
         with:
           name: tatarnetes-headlamp-plugin
           path: headlamp-plugin/*.tar.gz
+
+  headlamp-e2e:
+    # Плагин чын Headlamp'та, kind төркеме каршында / the plugin in a real
+    # Headlamp (the version in .upstream-version) against kind, driven by Playwright.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the plugin
+        working-directory: headlamp-plugin
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          mkdir -p "$RUNNER_TEMP/plugins/tatarnetes"
+          cp dist/main.js package.json "$RUNNER_TEMP/plugins/tatarnetes/"
+      - uses: helm/kind-action@v1
+        with:
+          cluster_name: tatarnetes
+      - name: Run Headlamp with the plugin
+        run: |
+          version=$(cat headlamp-plugin/.upstream-version)
+          mkdir -p "$RUNNER_TEMP/kube"
+          kind get kubeconfig --name tatarnetes > "$RUNNER_TEMP/kube/config"
+          chmod -R a+rX "$RUNNER_TEMP/kube" "$RUNNER_TEMP/plugins"
+          docker run -d --name headlamp --network host \
+            -v "$RUNNER_TEMP/kube:/kube:ro" \
+            -v "$RUNNER_TEMP/plugins:/headlamp/plugins:ro" \
+            "ghcr.io/headlamp-k8s/headlamp:${version}" \
+            -plugins-dir=/headlamp/plugins -kubeconfig=/kube/config
+          for i in $(seq 60); do
+            curl -fsS http://localhost:4466/config >/dev/null && break
+            sleep 2
+          done
+          curl -fsS http://localhost:4466/config
+          echo
+          curl -fsS http://localhost:4466/plugins
+      - name: Playwright
+        working-directory: headlamp-plugin/e2e
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Headlamp logs
+        if: always()
+        run: docker logs headlamp 2>&1 | tail -n 200
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: headlamp-e2e-screenshots
+          path: |
+            headlamp-plugin/e2e/shots/
+            headlamp-plugin/e2e/results/
+            headlamp-plugin/e2e/report/

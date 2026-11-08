@@ -4,3 +4,6 @@
 node_modules/
 headlamp-plugin/dist/
 headlamp-plugin/*.tar.gz
+headlamp-plugin/e2e/results/
+headlamp-plugin/e2e/report/
+headlamp-plugin/e2e/shots/
