@@ -94,6 +94,12 @@ kubectl proxy --port=8001 --www=/path/to/tatarnetes-ui --www-prefix=/ui/
 
 Һәрберсен плагин көйләүләрендә сүндереп була.
 
+| Кузаклар / Pods | Чәй тәнәфесе / Tea break |
+|---|---|
+| ![Headlamp: кузаклар](docs/media/headlamp-pods.png) | ![Headlamp: чәй](docs/media/headlamp-tea-break.png) |
+| **Татарнетес бите / The plugin's page** | **Төеннәр / Nodes** |
+| ![Headlamp: Татарнетес бите](docs/media/headlamp-plugin-page.png) | ![Headlamp: төеннәр](docs/media/headlamp-nodes.png) |
+
 ```bash
 cd headlamp-plugin
 npm install
@@ -163,7 +169,10 @@ npm start                            # development: hot-loads into Headlamp
 Install by unpacking the package into Headlamp's plugin directory
 (`~/.config/Headlamp/plugins/tatarnetes/`) or from a release tarball. CI
 type-checks, tests (the tea formula against `lib.js` and the CLI vector),
-builds and packages it on every push.
+builds and packages it on every push, then loads it into a real Headlamp
+(the version in `headlamp-plugin/.upstream-version`) against a kind cluster and
+checks the theme, carpet, Tatar menu and headers and the tea screen with
+Playwright (`headlamp-plugin/e2e/`); the screenshots above come from that run.
 
 The Dashboard-based panel above stays as it is, frozen at Dashboard 7.14.0.
 

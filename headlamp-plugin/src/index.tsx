@@ -13,6 +13,7 @@ import {
   registerSidebarEntry,
   registerSidebarEntryFilter,
 } from '@kinvolk/headlamp-plugin/lib';
+import { DateLabel, Link } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -85,7 +86,9 @@ function TatarBar() {
   const settings = store.useConfig()();
   const { carpet, tea } = { ...config(), ...(settings || {}) };
   const state = teaState(now);
-  const breakId = `${now.toDateString()}-${state.left > 0 ? now.getHours() * 60 + now.getMinutes() + state.left : 0}`;
+  const breakId = `${now.toDateString()}-${
+    state.left > 0 ? now.getHours() * 60 + now.getMinutes() + state.left : 0
+  }`;
   const [skipped, setSkipped] = useState<string | null>(null);
 
   return (
@@ -93,7 +96,10 @@ function TatarBar() {
       {carpet && (
         <GlobalStyles
           styles={{
-            '.MuiDrawer-paper': {
+            /* Headlamp paints the drawer with the `background` shorthand under
+               `<drawer> .MuiPaper-root`, which wins over a bare
+               `.MuiDrawer-paper` and wipes the image: one class more wins back. */
+            '.MuiDrawer-root .MuiDrawer-paper.MuiPaper-root': {
               backgroundImage: carpetBackground,
               backgroundSize: '220px 220px',
             },
@@ -134,7 +140,11 @@ function TatarBar() {
             }}
           >
             <Art svg={FACE_TEA_SVG} size={120} />
-            <Typography id="tatar-tea-title" variant="h6" sx={{ color: PALETTE.red, fontWeight: 800 }}>
+            <Typography
+              id="tatar-tea-title"
+              variant="h6"
+              sx={{ color: PALETTE.red, fontWeight: 800 }}
+            >
               ⛔ {MSG.teaTitle} ⛔
             </Typography>
             <Typography sx={{ my: 2 }}>{MSG.teaBody} 🍵🫓</Typography>
@@ -162,13 +172,63 @@ registerSidebarEntryFilter(entry => {
   return entry;
 });
 
+/* Headlamp'ның «name», «namespace», «age» баганалары — исем белән бирелгән
+   стандарт баганалар, аларның атамасын плагин үзгәртә алмый; шуңа алар шул ук
+   эчтәлекле объект баганаларга алыштырыла. Headlamp's built-in "name",
+   "namespace" and "age" columns come as bare strings whose headers a processor
+   cannot relabel, so they are swapped for object columns that render the same
+   cells under Tatar headers. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Row = any;
+const BUILTIN_COLUMNS: Record<string, object> = {
+  name: {
+    id: 'name',
+    label: COLUMNS.Name,
+    gridTemplate: 'auto',
+    getValue: (item: Row) => item.metadata.name,
+    render: (item: Row) => item && <Link kubeObject={item} />,
+  },
+  namespace: {
+    id: 'namespace',
+    label: COLUMNS.Namespace,
+    gridTemplate: 'auto',
+    filterVariant: 'multi-select',
+    getValue: (item: Row) => item.getNamespace() ?? '-',
+    render: (item: Row) =>
+      item?.getNamespace() ? (
+        <Link
+          routeName="namespace"
+          params={{ name: item.getNamespace() }}
+          activeCluster={item.cluster}
+        >
+          {item.getNamespace()}
+        </Link>
+      ) : (
+        ''
+      ),
+  },
+  age: {
+    id: 'age',
+    label: COLUMNS.Age,
+    gridTemplate: 'min-content',
+    disableFiltering: true,
+    cellProps: { align: 'right' },
+    getValue: (item: Row) => -new Date(item.metadata.creationTimestamp).getTime(),
+    render: (item: Row) =>
+      item && <DateLabel date={item.metadata.creationTimestamp} format="mini" />,
+  },
+};
+
 registerResourceTableColumnsProcessor(({ columns }) => {
   if (!config().names) {
     return columns;
   }
-  return columns.map(c =>
-    typeof c === 'object' && COLUMNS[c.label] ? { ...c, label: COLUMNS[c.label] } : c
-  );
+  return columns.map(c => {
+    if (typeof c === 'string') {
+      return (BUILTIN_COLUMNS[c] as unknown as typeof c) ?? c;
+    }
+    return typeof c === 'object' && COLUMNS[c.label] ? { ...c, label: COLUMNS[c.label] } : c;
+  });
 });
 
 /** The plugin's page: today's tea, Tukay, the glossary. */
