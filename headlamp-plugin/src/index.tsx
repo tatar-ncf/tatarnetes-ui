@@ -17,13 +17,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useState } from 'react';
-import FaceHappy from './assets/face-happy.svg';
-import FaceTea from './assets/face-tea.svg';
-import Logo from './assets/tatarnetes-logo.svg';
-import { carpetBackground } from './carpet';
+import { useEffect, useState } from 'react';
+import { carpetBackground, dataUri, FACE_HAPPY_SVG, FACE_TEA_SVG, LOGO_SVG } from './art';
 import { config, Settings, store } from './settings';
 import { COLUMNS, GLOSSARY, MSG, SIDEBAR } from './strings';
 import { hhmm, teaState, teaWindowsFor } from './tea';
@@ -58,20 +54,20 @@ registerAppTheme({
   buttonTextTransform: 'none',
 });
 
-/** A copied dashboard SVG at a size, through MUI's SvgIcon (svgr components take no props in the plugin's types). */
-function Art(props: { svg: React.ElementType; size: number; label?: string }) {
+/** One of the dashboard's pictures at a size; decorative unless labelled. */
+function Art(props: { svg: string; size: number; label?: string }) {
   return (
-    <SvgIcon
-      component={props.svg}
-      inheritViewBox
-      titleAccess={props.label}
+    <img
+      src={dataUri(props.svg)}
+      width={props.size}
+      height={props.size}
+      alt={props.label || ''}
       aria-hidden={props.label ? undefined : true}
-      sx={{ width: props.size, height: props.size }}
     />
   );
 }
 
-registerAppLogo(() => <Art svg={Logo} size={32} label="Татарнетес" />);
+registerAppLogo(() => <Art svg={LOGO_SVG} size={32} label="Татарнетес" />);
 
 /** The current time, every 15 seconds. */
 function useNow(): Date {
@@ -137,7 +133,7 @@ function TatarBar() {
               borderRadius: 2,
             }}
           >
-            <Art svg={FaceTea} size={120} />
+            <Art svg={FACE_TEA_SVG} size={120} />
             <Typography id="tatar-tea-title" variant="h6" sx={{ color: PALETTE.red, fontWeight: 800 }}>
               ⛔ {MSG.teaTitle} ⛔
             </Typography>
@@ -183,9 +179,9 @@ function TatarPage() {
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         {state.onBreak ? (
-          <Art svg={FaceTea} size={72} />
+          <Art svg={FACE_TEA_SVG} size={72} />
         ) : (
-          <Art svg={FaceHappy} size={72} />
+          <Art svg={FACE_HAPPY_SVG} size={72} />
         )}
         <Typography variant="h4" component="h1">
           {MSG.pageTitle}
