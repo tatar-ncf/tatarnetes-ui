@@ -9,9 +9,30 @@ const CLUSTER = process.env.HEADLAMP_CLUSTER || 'kind-tatarnetes';
 const THEME = 'Татарнетес / Tatarnetes';
 const SHOTS = path.join(__dirname, 'shots');
 
-// 2026-11-08: tea at 17:35, 17:58 and 18:21 (tatar.test.ts, the CLI vector).
-const WORKING = new Date('2026-11-08T12:00:00Z');
-const TEA_TIME = new Date('2026-11-08T17:36:00Z');
+// The dashboard's lib.js holds the tea formula the CLI and the plugin share.
+const { teaWindowsFor } = require('../../lib.js');
+
+/* A day after the cluster was made (so ages read right), with a first break no
+   earlier than 01:00: WORKING sits an hour before it, TEA_TIME a minute in.
+   The browser runs in UTC, so local and UTC days agree. */
+const pad = n => String(n).padStart(2, '0');
+const hhmm = m => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+const day = new Date();
+day.setUTCHours(0, 0, 0, 0);
+let first;
+do {
+  day.setUTCDate(day.getUTCDate() + 1);
+  first = Math.min(
+    ...teaWindowsFor(new Date(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate())).map(
+      w => w[0]
+    )
+  );
+} while (first < 60);
+const at = minute => new Date(day.getTime() + minute * 60_000);
+const WORKING = at(first - 60);
+const TEA_TIME = at(first + 1);
+const FIRST = hhmm(first);
+const FIRST_END = hhmm(first + 7);
 
 /** Opens Headlamp with the Tatar theme chosen and the clock fixed at `when`. */
 async function open(page, url, when) {
@@ -40,11 +61,13 @@ test('theme, carpet and Tatar sidebar on the pods list', async ({ page }) => {
   }
 
   // The tea chip in the app bar, between breaks.
-  await expect(page.getByText(/Next tea: 17:35/)).toBeVisible();
+  await expect(page.getByText(new RegExp(`Next tea: ${FIRST}`))).toBeVisible();
 
   // Tatar column headers and real pods from kind.
   await expect(page.getByRole('columnheader', { name: /Исем \/ Name/ }).first()).toBeVisible();
   await expect(page.getByRole('columnheader', { name: /Мәйдан \/ Namespace/ }).first()).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: /Яшь \/ Age/ }).first()).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: /Хәл \/ Status/ }).first()).toBeVisible();
   await expect(page.getByText(/^coredns-/).first()).toBeVisible();
   await shot(page, 'headlamp-pods');
 });
@@ -60,7 +83,7 @@ test("the plugin's page: tea schedule, Tukay, glossary", async ({ page }) => {
   await open(page, `/c/${CLUSTER}/tatarnetes`, WORKING);
   await expect(page.getByRole('heading', { name: 'Татарнетес', level: 1 })).toBeVisible();
   await expect(page.getByText(/Габдулла Тукай/)).toBeVisible();
-  await expect(page.getByText('17:35–17:42')).toBeVisible();
+  await expect(page.getByText(`${FIRST}–${FIRST_END}`)).toBeVisible();
   await expect(page.getByText('кузак', { exact: true })).toBeVisible();
   await shot(page, 'headlamp-plugin-page');
 });
