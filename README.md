@@ -87,9 +87,14 @@ kubectl proxy --port=8001 --www=/path/to/tatarnetes-ui --www-prefix=/ui/
 - **Келәм** — сул панель артында татар келәме.
 - **Чәй тәнәфесе** — `ayda` һәм бу панель белән бер үк график: өстә 🍵 тамгасы,
   тәнәфестә — келәм өстендә чәй экраны («Ашыгыч эш» төймәсе белән).
-- **Татарча атамалар** — меню (Кузаклар, Төеннәр, Хезмәтләр…) һәм таблица
-  баганалары («Хәл / Status»); Headlamp'ның калган юлларын плагин API'сы
-  алыштырырга бирми.
+- **Татарча атамалар** — Headlamp 0.46 менюсы тулысынча (Кузаклар, Харита,
+  Шлюз, Куркынычсызлык, Махсус ресурслар…) һәм таблица баганалары
+  («Хәл / Status»). Атамалар — tatarnetes
+  [сүзлеге](https://github.com/tatar-ncf/tatarnetes/blob/main/docs/terminology.tt.md)
+  буенча; яңалары шунда «Headlamp менюсы» бүлегендә тәкъдим ителә. Headlamp'ның
+  калган юлларын плагин API'сы алыштырырга бирми.
+- Сайланган юл WCAG AA контрастына туры килә (келәм яшеле өстендә ачык
+  алтын); CI аны чын Headlamp'та үлчи.
 - **«Татарнетес» бите** — бүгенге чәй, Тукай юлы, сүзлек.
 
 Һәрберсен плагин көйләүләрендә сүндереп була.
@@ -99,6 +104,8 @@ kubectl proxy --port=8001 --www=/path/to/tatarnetes-ui --www-prefix=/ui/
 | ![Headlamp: кузаклар](docs/media/headlamp-pods.png) | ![Headlamp: чәй](docs/media/headlamp-tea-break.png) |
 | **Татарнетес бите / The plugin's page** | **Төеннәр / Nodes** |
 | ![Headlamp: Татарнетес бите](docs/media/headlamp-plugin-page.png) | ![Headlamp: төеннәр](docs/media/headlamp-nodes.png) |
+| **Көйләүләр / Settings** | |
+| ![Headlamp: көйләүләр](docs/media/headlamp-settings.png) | |
 
 ```bash
 cd headlamp-plugin
@@ -152,9 +159,14 @@ the dashboard upstream recommends now that the Kubernetes Dashboard is archived:
 - **Tea breaks** on the same schedule as `ayda` and this panel: a 🍵 chip in the
   app bar, and during a break a tea screen over the carpet, with a button to
   skip it for an emergency.
-- **Tatar names** in the menu (Кузаклар, Төеннәр, Хезмәтләр…) and in table
-  headers ("Хәл / Status"); the rest of Headlamp's text is beyond what the
-  plugin API lets a plugin change.
+- **Tatar names** for the whole Headlamp 0.46 menu (Кузаклар, Харита, Шлюз,
+  Куркынычсызлык, Махсус ресурслар…) and in table headers ("Хәл / Status").
+  The terms follow the tatarnetes
+  [glossary](https://github.com/tatar-ncf/tatarnetes/blob/main/docs/terminology.tt.md),
+  whose "Headlamp menu" section proposes the new ones. The rest of Headlamp's
+  text is beyond what the plugin API lets a plugin change.
+- The selected menu entry meets WCAG AA contrast (light gold on the carpet
+  green); CI measures it in a real Headlamp.
 - **A "Татарнетес" page**: today's tea, a Tukay line, the glossary.
 
 Each part can be switched off in the plugin's settings.

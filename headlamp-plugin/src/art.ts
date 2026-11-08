@@ -131,6 +131,7 @@ export const CARPET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="240" h
 </svg>
 `;
 
-export const dataUri = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+export const dataUri = (svg: string) =>
+  `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
 export const carpetBackground = `url("${dataUri(CARPET_SVG)}")`;

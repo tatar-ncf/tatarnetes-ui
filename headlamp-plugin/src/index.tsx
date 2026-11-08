@@ -13,6 +13,7 @@ import {
   registerSidebarEntry,
   registerSidebarEntryFilter,
 } from '@kinvolk/headlamp-plugin/lib';
+import * as pluginLib from '@kinvolk/headlamp-plugin/lib';
 import { DateLabel, Link } from '@kinvolk/headlamp-plugin/lib/CommonComponents';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -21,19 +22,10 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { carpetBackground, dataUri, FACE_HAPPY_SVG, FACE_TEA_SVG, LOGO_SVG } from './art';
+import { PALETTE } from './palette';
 import { config, Settings, store } from './settings';
 import { COLUMNS, GLOSSARY, MSG, SIDEBAR } from './strings';
 import { hhmm, teaState, teaWindowsFor } from './tea';
-
-const PALETTE = {
-  green: '#1f8a4c',
-  greenDark: '#12693a',
-  carpet: '#0f5c34',
-  red: '#d21f2a',
-  gold: '#e3a81a',
-  cream: '#fbf6e9',
-  ink: '#241a0d',
-};
 
 registerAppTheme({
   name: 'Татарнетес / Tatarnetes',
@@ -46,8 +38,12 @@ registerAppTheme({
   sidebar: {
     background: PALETTE.carpet,
     color: PALETTE.cream,
+    /* A selected top-level entry is drawn on selectedBackground in its
+       contrast text (ink on gold); a selected sub-entry gets no background,
+       only selectedColor on the carpet, so that must be light: ink there
+       was dark on green. */
     selectedBackground: PALETTE.gold,
-    selectedColor: PALETTE.ink,
+    selectedColor: PALETTE.goldLight,
     actionBackground: PALETTE.red,
   },
   navbar: { background: PALETTE.greenDark, color: PALETTE.cream },
@@ -102,6 +98,11 @@ function TatarBar() {
             '.MuiDrawer-root .MuiDrawer-paper.MuiPaper-root': {
               backgroundImage: carpetBackground,
               backgroundSize: '220px 220px',
+            },
+            /* The selected sub-entry sits on plain carpet green, not on the
+               tulips and gold lines, so its contrast holds (WCAG AA). */
+            '.MuiDrawer-root .MuiCollapse-root .MuiListItemButton-root.Mui-selected': {
+              backgroundColor: PALETTE.carpet,
             },
           }}
         />
@@ -161,16 +162,32 @@ function TatarBar() {
 
 registerAppBarAction(TatarBar);
 
-/* Татарча меню: Headlamp бу фильтрның кайтарганын түгел, ә аның хөкемен
-   куллана, шуңа атама урынында алыштырыла. Headlamp keeps the entries a
-   filter accepts rather than what it returns, so the label is set in place. */
-registerSidebarEntryFilter(entry => {
-  const tatar = SIDEBAR[entry.name];
-  if (tatar && config().names) {
+/* Татарча меню: атама исем буенча алыштырыла (Headlamp 0.46 менюсы тулысынча).
+   Tatar menu: labels are swapped by the entries' stable names, for the whole
+   menu of Headlamp 0.46, in the cluster sidebar and in the home one. The
+   "home" entry is the cluster itself when there is a single cluster. */
+type SidebarEntryProps = Parameters<Parameters<typeof registerSidebarEntryFilter>[0]>[0];
+
+function tatarLabel(entry: SidebarEntryProps): SidebarEntryProps {
+  if (!config().names) {
+    return entry;
+  }
+  const tatar = entry.name === 'home' && entry.url !== '/' ? SIDEBAR.cluster : SIDEBAR[entry.name];
+  if (tatar) {
     entry.label = tatar;
   }
   return entry;
-});
+}
+
+registerSidebarEntryFilter(tatarLabel);
+
+/* The home sidebar's filter is in Headlamp 0.46 but not yet typed in
+   @kinvolk/headlamp-plugin 0.14: reach it through the runtime library. */
+const registerHomeSidebarEntryFilter = (pluginLib as unknown as Record<string, unknown>)
+  .registerHomeSidebarEntryFilter as
+  | ((filter: (entry: SidebarEntryProps) => SidebarEntryProps | null) => void)
+  | undefined;
+registerHomeSidebarEntryFilter?.(tatarLabel);
 
 /* Headlamp'ның «name», «namespace», «age» баганалары — исем белән бирелгән
    стандарт баганалар, аларның атамасын плагин үзгәртә алмый; шуңа алар шул ук
