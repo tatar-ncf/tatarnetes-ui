@@ -1,14 +1,14 @@
 import { readFileSync } from 'fs';
 import { createRequire } from 'module';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { resolve } from 'path';
 import { CARPET_SVG } from './carpet';
 import { COLUMNS, SIDEBAR } from './strings';
 import { hhmm, teaState, teaWindowsFor } from './tea';
 
-const here = dirname(fileURLToPath(import.meta.url));
+// Tests run in headlamp-plugin/ (npm test).
+const here = resolve(process.cwd(), 'src');
 // The frozen dashboard's lib.js, the reference the CLI formula is mirrored in.
-const lib = createRequire(import.meta.url)(resolve(here, '../../lib.js'));
+const lib = createRequire(resolve(process.cwd(), 'package.json'))(resolve(here, '../../lib.js'));
 
 describe('tea schedule', () => {
   it('matches the dashboard (and so the CLI) on many days', () => {
