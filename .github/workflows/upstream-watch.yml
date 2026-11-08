@@ -32,3 +32,26 @@ jobs:
           body="Апстрим Dashboard яңа тотрыклы версия: **$latest** (хәзерге \`$pinned\`). Татарлаштыру кирәк; тег \`$ours\`. / New upstream stable Dashboard: $latest (pinned $pinned); tag \`$ours\`."
           gh label create upstream --color ededed --description "Upstream tracking" 2>/dev/null || true
           gh issue create --title "$title" --body "$body" --label upstream
+
+  headlamp:
+    # Dashboard архивланган; Татарнетес тәҗрибәсе хәзер Headlamp плагинында.
+    # Dashboard is archived; the Tatar experience lives on as a Headlamp plugin,
+    # so new Headlamp releases are what to check it against.
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      UPSTREAM: kubernetes-sigs/headlamp
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check latest Headlamp release
+        run: |
+          latest=$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)
+          pinned=$(cat headlamp-plugin/.upstream-version 2>/dev/null || echo "none")
+          echo "upstream latest: $latest | pinned: $pinned"
+          [ "$latest" = "$pinned" ] && { echo "up to date"; exit 0; }
+          title="Upstream Headlamp $latest available"
+          existing=$(gh issue list --search "$title in:title" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          [ -n "$existing" ] && { echo "already tracked #$existing"; exit 0; }
+          body="Headlamp яңа релиз: **$latest** (хәзерге \`$pinned\`). Плагинны сынарга: тема, келәм, чәй, татарча атамалар. / New Headlamp release $latest (pinned $pinned): check the plugin's theme, carpet, tea overlay and Tatar names, then bump headlamp-plugin/.upstream-version."
+          gh label create upstream --color ededed --description "Upstream tracking" 2>/dev/null || true
+          gh issue create --title "$title" --body "$body" --label upstream

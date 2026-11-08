@@ -29,6 +29,11 @@ Dashboard'ның **тотрыклы (stable)** чыгарылышларына б
 булмаячак, `upstream-watch` моннан соң issue ачмаячак. Панель Dashboard кодын
 кулланмый (үз статик UI + `kubectl proxy`), шуңа бу аңа тәэсир итми.
 
+**Dashboard панеле 7.14.0'да туктатылды.** Татар тәҗрибәсе хәзер Headlamp
+плагинында (`headlamp-plugin/`): аның версиясе — `package.json`, ул UI
+тамгасы белән бергә чыга (`release.yml` тарболны релизга беркетә), ә
+`upstream-watch` Headlamp релизларын күзәтә (`headlamp-plugin/.upstream-version`).
+
 ## English
 
 Tatarnetes UI is a **national layer over the Kubernetes Dashboard**; it tracks
@@ -49,3 +54,8 @@ against Kubernetes 1.36 (kind) and alongside `ayda` on kubectl 1.37.
 Dashboard releases will come, so `upstream-watch` will not open new issues. The
 panel does not use Dashboard code (its own static UI over `kubectl proxy`), so
 this does not affect it.
+
+**The Dashboard-based panel is frozen at 7.14.0.** The Tatar experience moves
+on as a Headlamp plugin (`headlamp-plugin/`): its version is in `package.json`,
+it ships with the UI tags (`release.yml` attaches its tarball), and
+`upstream-watch` follows Headlamp releases (`headlamp-plugin/.upstream-version`).

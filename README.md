@@ -17,6 +17,13 @@
 
 </div>
 
+> **Headlamp плагины / Headlamp plugin:** Kubernetes Dashboard архивланды, апстрим
+> Headlamp'ны тәкъдим итә. Татар тәҗрибәсе хәзер [`headlamp-plugin/`](#headlamp-плагины)
+> эчендә; Dashboard нигезендәге панель **7.14.0'да туктатылды** (эшли, ләкин яңармый).
+> The Kubernetes Dashboard is archived and upstream recommends Headlamp: the Tatar
+> experience now lives in [`headlamp-plugin/`](#headlamp-plugin); the Dashboard-based
+> panel is **frozen at 7.14.0** (it works, it is no longer developed).
+
 > Күренешләр: [дашборд](docs/media/dashboard.png) ·
 > [төеннәр + тамга](docs/media/nodes-tamga.png) ·
 > [чәй тәнәфесе + шамаиль](docs/media/tea-shamail.png) ·
@@ -71,6 +78,32 @@ kubectl proxy --port=8001 --www=/path/to/tatarnetes-ui --www-prefix=/ui/
   намуслы итеп күрсәтелә. Мәгълүмат 10 секунд саен яңара.
 - Чәй вакытында панель кластерга мөрәҗәгать итми — `ayda` кебек.
 
+### Headlamp плагины
+
+[Headlamp](https://github.com/kubernetes-sigs/headlamp) өчен `tatarnetes` плагины:
+
+- **Тема** «Татарнетес / Tatarnetes» — Татарстан флагы төсләре һәм алтын, логотип
+  (Көйләүләр → Гомуми → Тема).
+- **Келәм** — сул панель артында татар келәме.
+- **Чәй тәнәфесе** — `ayda` һәм бу панель белән бер үк график: өстә 🍵 тамгасы,
+  тәнәфестә — келәм өстендә чәй экраны («Ашыгыч эш» төймәсе белән).
+- **Татарча атамалар** — меню (Кузаклар, Төеннәр, Хезмәтләр…) һәм таблица
+  баганалары («Хәл / Status»); Headlamp'ның калган юлларын плагин API'сы
+  алыштырырга бирми.
+- **«Татарнетес» бите** — бүгенге чәй, Тукай юлы, сүзлек.
+
+Һәрберсен плагин көйләүләрендә сүндереп була.
+
+```bash
+cd headlamp-plugin
+npm install
+npm run build && npm run package     # tatarnetes-<версия>.tar.gz
+npm start                            # үсеш: Headlamp'ка җанлы йөкләнә
+```
+
+Урнаштыру: пакетны Headlamp плагиннары папкасына чишәргә
+(`~/.config/Headlamp/plugins/tatarnetes/`) яки релиздагы тарболны кулланырга.
+
 ## English
 
 **Tatarnetes UI** is a national web dashboard based on the Kubernetes Dashboard.
@@ -102,13 +135,45 @@ same-origin API base is accepted, and the CSP allows `'self'` only. Loading,
 empty, connection-error and `403` (RBAC) states are shown honestly in Tatar and
 English; data refreshes every 10 seconds.
 
+### Headlamp plugin
+
+The `tatarnetes` plugin for [Headlamp](https://github.com/kubernetes-sigs/headlamp),
+the dashboard upstream recommends now that the Kubernetes Dashboard is archived:
+
+- **Theme** "Татарнетес / Tatarnetes": the Tatarstan flag colours plus gold, and
+  the logo (Settings → General → Theme).
+- **Carpet** behind the sidebar.
+- **Tea breaks** on the same schedule as `ayda` and this panel: a 🍵 chip in the
+  app bar, and during a break a tea screen over the carpet, with a button to
+  skip it for an emergency.
+- **Tatar names** in the menu (Кузаклар, Төеннәр, Хезмәтләр…) and in table
+  headers ("Хәл / Status"); the rest of Headlamp's text is beyond what the
+  plugin API lets a plugin change.
+- **A "Татарнетес" page**: today's tea, a Tukay line, the glossary.
+
+Each part can be switched off in the plugin's settings.
+
+```bash
+cd headlamp-plugin
+npm install
+npm run build && npm run package     # tatarnetes-<version>.tar.gz
+npm start                            # development: hot-loads into Headlamp
+```
+
+Install by unpacking the package into Headlamp's plugin directory
+(`~/.config/Headlamp/plugins/tatarnetes/`) or from a release tarball. CI
+type-checks, tests (the tea formula against `lib.js` and the CLI vector),
+builds and packages it on every push.
+
+The Dashboard-based panel above stays as it is, frozen at Dashboard 7.14.0.
+
 ---
 
 ## Гаилә / Family
 
 - 🐘 [tatarnetes](https://github.com/tatar-ncf/tatarnetes) — милли Kubernetes
 - 🖥 **tatarnetes-ui** — идарә панеле (бу репо)
-- 🐧 [tataros](https://github.com/tatar-ncf/tataros) — милли Talos
+- 🐧 [tataros](https://github.com/tatar-ncf/tataros) — милли kuberoot дистрибутивы
 
 [**Tatar-Native Computing Foundation**](https://github.com/tatar-ncf) · Tatarch License 2.0
 

@@ -18,3 +18,21 @@ jobs:
             --title "Татарнетес UI ${GITHUB_REF_NAME}" \
             --generate-notes \
             "tatarnetes-ui-${GITHUB_REF_NAME}.tar.gz"
+
+  headlamp-plugin:
+    # Плагинны релизга беркетә / attaches the Headlamp plugin to the release
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        working-directory: headlamp-plugin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm run build && npm run package
+      - run: gh release upload "${GITHUB_REF_NAME}" ./*.tar.gz
